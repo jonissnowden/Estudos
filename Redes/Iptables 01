@@ -1,0 +1,73 @@
+                                
+                                FIREWALL IPTABLES 01 - Tabelas, cadeias e regras
+                                  
+*Netfilter = subsistema de processameto de pacotes
+*Iptables = ferramenta para configurar netfilter: compara o trafego de rede que a maquina recebe com regras
+*Regras = definem caracteristicas que os pacotes devem possuir, e ações que serão tomadas por estes
+*Tabelas > Cadeias > Regras
+
+Tabelas --------
+
+01) FILTER: Tabela padrão, onde manipulamos os pacotes de rede
+02) NAT:Alterar pacotes que criam conexões novas e para redirecionar conexões (ex: compartilhamento de internet)
+03) MANGLE: Tipos especificos de alterações de pacotes
+
+Cadeias (chain) --------
+
+01) tab. Filter> INPUT, OUTPUT e FORWARD
+02) tab. Nat> PREROUTING, OUTPUT e POSTROUTING
+03) tab. Mangle> PREROUTING, OUTPUT, POSTROUTING, INPUT e FORWARD
+
+-Conjunto de regras usadas para verificar a correspondencia de um pacote de forma sequencial
+  Se nenhuma regra corresponder > aceita (accept) ou descarta (drop)
+  
+*INPUT - Aplica regras aos pacotes que chegam a maquina/servidor
+*OUTPUT - Aplica regras aos pacotes originarios do servidor, que saem do servidor
+*FORWARD - Aplica regrasaos pacotes que são roteados atraves do servidor
+*PREROUTIG - Altera os pacotes de rede quando eles chegam no servidor e na hora do roteamento
+*POSTROUTING - Altera os pacotes de rede após o roteamento, antes de sair do servidor
+
+Regras (rules) --------
+>Consiste em um ou mais critérios de correspondência que determinam quais pacotes de rede serão afetados, e uma
+especificação de objetivo ("target"), que determina como o pacote será afetado.
+>A regra só pode ser aplicada se todas as correpondências listadas forem satisfeitas.
+> Há muitas correspondências ("matches") que podem ser usadas no iptables: -m ou --match 
+
+Estrutura geral da regra:
+  #iptables $subcomando chain $parametro1_valor1_parametro2_valor2_parametro3_valor3 ação
+
+Subcomandos principais:
+  -A anexa a regra no final da cadeia
+  -F apaga todas as regras na cadeia
+  -L lista todas as regras da cadeia
+  -N cria uma nova cadeia com nome desejado
+  -P configura a regra padrão da cadeia
+  -D apaga uma regra em uma posição da cadeia
+  -X exclui uma cadeia vazia
+  -I insere uma regra em uma posição da cadeia
+
+Ações (targets):
+  ACCEPT - pacote permitido
+  DROP - descartar pacote
+  QUEUE - envia o pacote ao userspace (fora do kernel)
+  RETURN - descontinuar processamento do pacote  e aplicar a regra padrão dele
+adicionais:  
+  DNAT - reescreve o endereço de destino (NAT)
+  SNAT - rescreve o endereço de origem (NAT)
+  LOG - coloca no log informações sobre o pacote
+  
+  Parametros       |Significados
+  -t tabela        |> especifica a tabela (filter = padrão)
+  -j ação          |> realiza ação especificada
+  -p protocolo     |> especifica o protocolo (icmp, tcp, udp, all)
+  -s IP            |> IP de origem do pacote
+  -d IP            |> IP de destino do pacote
+  -i interface     |> Nomeda interface de rede de entrada do pacote
+  -o interface     |> Nomeda interface de rede de saída do pacote
+  --sport portas   |> Portas de origem
+  --dport portas   |> Portas de destino
+  --syn            |> Identifica nova requisição de conexão
+  --icmp-type      |> tipo de mensagem ICMP (ex: bloquear o ping)
+
+
+
